@@ -1,0 +1,61 @@
+<main class="collection-page">
+  <header class="page-header">
+    <div class="title-with-back">
+      <a class="back-button" routerLink="/budgets" aria-label="Back to budgets">←</a>
+      <div>
+        <p class="eyebrow">transactions</p>
+        <h1>{{ budget()?.name ?? 'budget' }}</h1>
+      </div>
+    </div>
+    @if (budget(); as currentBudget) {
+      <p class="current-balance">{{ currentBudget.currentBalance | number: '1.2-2' }}</p>
+    }
+  </header>
+
+  <section class="collection" aria-live="polite" aria-label="Transaction list">
+    @if (loading()) {
+      <p class="center-message">loading…</p>
+    } @else if (transactionCount() === 0) {
+      <p class="center-message">Nothing to show here</p>
+    } @else if (budget(); as currentBudget) {
+      @for (group of currentBudget.transactionGroups; track group.date) {
+        <section class="date-group">
+          <h2>{{ group.date }}</h2>
+          <ul>
+            @for (transaction of group.transactions; track transaction.id) {
+              <li class="collection-row">
+                <div class="transaction-content">
+                  <strong>{{ transaction.name }}</strong>
+                  <span
+                    class="amount"
+                    [class.income]="transaction.amount > 0"
+                    [class.expense]="transaction.amount < 0"
+                  >
+                    {{ transaction.amount | number: '1.2-2' }}
+                  </span>
+                </div>
+                <button
+                  class="delete-button"
+                  type="button"
+                  [attr.aria-label]="'Delete ' + transaction.name"
+                  (click)="deleteTransaction($event, transaction.id)"
+                >
+                  ×
+                </button>
+              </li>
+            }
+          </ul>
+        </section>
+      }
+    }
+  </section>
+
+  <footer class="action-dock">
+    <a
+      class="add-button"
+      [routerLink]="['/budgets', budgetId, 'transactions', 'new']"
+      aria-label="Add a transaction"
+      >+</a
+    >
+  </footer>
+</main>

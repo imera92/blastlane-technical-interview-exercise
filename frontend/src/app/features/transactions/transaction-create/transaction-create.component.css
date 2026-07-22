@@ -1,0 +1,23 @@
+@import '../../../../styles/form-page.css';
+
+.type-label {
+  margin-top: 0.8rem;
+  font-weight: 800;
+}
+
+.type-button {
+  border: 0;
+  padding: 0.9rem 1rem;
+  color: var(--white);
+  font: inherit;
+  font-weight: 800;
+  text-transform: lowercase;
+}
+
+.income {
+  background: var(--green);
+}
+
+.expense {
+  background: var(--red);
+}

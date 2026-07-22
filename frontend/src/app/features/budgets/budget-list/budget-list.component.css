@@ -1,0 +1,142 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+}
+
+.collection-page {
+  display: grid;
+  min-height: 100dvh;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px solid var(--black);
+  padding: 1.5rem clamp(1.25rem, 4vw, 3rem);
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(2.5rem, 8vw, 5rem);
+  letter-spacing: -0.07em;
+}
+
+.collection {
+  position: relative;
+  min-height: 16rem;
+  overflow: auto;
+}
+
+.center-message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: 0;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.collection-row {
+  position: relative;
+  display: flex;
+  border-bottom: 1px solid var(--black);
+}
+
+.row-link {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.3rem clamp(1.25rem, 4vw, 3rem);
+  color: var(--black);
+  text-decoration: none;
+}
+
+.row-link:hover,
+.row-link:focus-visible {
+  background: var(--black);
+  color: var(--white);
+}
+
+strong,
+small {
+  display: block;
+}
+
+strong {
+  font-size: 1.15rem;
+}
+
+small {
+  margin-top: 0.25rem;
+}
+
+.balance {
+  padding-right: 2.5rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+}
+
+.delete-button {
+  position: absolute;
+  top: 50%;
+  right: clamp(0.65rem, 2vw, 1.5rem);
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  transform: translateY(-50%);
+  place-items: center;
+  border: 0;
+  background: var(--red);
+  color: var(--white);
+  font-size: 1.4rem;
+  opacity: 0;
+}
+
+.collection-row:hover .delete-button,
+.collection-row:focus-within .delete-button,
+.delete-button:focus-visible {
+  opacity: 1;
+}
+
+.action-dock {
+  display: flex;
+  min-height: 7.5rem;
+  align-items: center;
+  justify-content: flex-end;
+  border-top: 2px solid var(--black);
+  padding: 1.25rem clamp(1.25rem, 4vw, 3rem);
+}
+
+.add-button {
+  display: grid;
+  width: 4.25rem;
+  height: 4.25rem;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--black);
+  color: var(--white);
+  font-size: 2.4rem;
+  line-height: 1;
+  text-decoration: none;
+}
+
+.add-button:hover,
+.add-button:focus-visible {
+  background: var(--green);
+}
+
+@media (hover: none) {
+  .delete-button {
+    opacity: 1;
+  }
+}

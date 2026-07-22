@@ -1,0 +1,56 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+}
+
+.login-page {
+  display: grid;
+  min-height: 100dvh;
+  place-items: center;
+  padding: 2rem;
+}
+
+.login-card {
+  width: min(100%, 25rem);
+  border: 2px solid var(--black);
+  padding: clamp(1.5rem, 5vw, 3rem);
+}
+
+.eyebrow {
+  margin: 0 0 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 0 0 2rem;
+  font-size: clamp(2.4rem, 10vw, 4rem);
+  font-weight: 800;
+  letter-spacing: -0.06em;
+}
+
+form {
+  display: grid;
+  gap: 0.65rem;
+}
+
+label {
+  margin-top: 0.75rem;
+  font-weight: 700;
+  text-transform: lowercase;
+}
+
+input {
+  width: 100%;
+  border: 1px solid var(--black);
+  padding: 0.9rem 1rem;
+  background: var(--white);
+  color: var(--black);
+  font: inherit;
+}
+
+.primary-button {
+  margin-top: 1.25rem;
+}

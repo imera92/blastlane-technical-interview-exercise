@@ -1,0 +1,40 @@
+<main class="collection-page">
+  <header class="page-header">
+    <h1>budgets</h1>
+    <button class="text-button" type="button" (click)="logout()">log out</button>
+  </header>
+
+  <section class="collection" aria-live="polite" aria-label="Budget list">
+    @if (loading()) {
+      <p class="center-message">loading…</p>
+    } @else if (budgets().length === 0) {
+      <p class="center-message">Nothing to show here</p>
+    } @else {
+      <ul>
+        @for (budget of budgets(); track budget.id) {
+          <li class="collection-row">
+            <a class="row-link" [routerLink]="['/budgets', budget.id]">
+              <span>
+                <strong>{{ budget.name }}</strong>
+                <small>starting {{ budget.startingBalance | number: '1.2-2' }}</small>
+              </span>
+              <span class="balance">{{ budget.currentBalance | number: '1.2-2' }}</span>
+            </a>
+            <button
+              class="delete-button"
+              type="button"
+              [attr.aria-label]="'Delete ' + budget.name"
+              (click)="deleteBudget($event, budget.id)"
+            >
+              ×
+            </button>
+          </li>
+        }
+      </ul>
+    }
+  </section>
+
+  <footer class="action-dock">
+    <a class="add-button" routerLink="/budgets/new" aria-label="Create a budget">+</a>
+  </footer>
+</main>
