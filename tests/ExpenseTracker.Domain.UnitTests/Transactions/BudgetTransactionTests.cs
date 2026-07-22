@@ -1,5 +1,5 @@
+using ExpenseTracker.Domain.Budgets;
 using ExpenseTracker.Domain.Common;
-using ExpenseTracker.Domain.Transactions;
 using Xunit;
 
 namespace ExpenseTracker.Domain.UnitTests.Transactions;
@@ -11,16 +11,16 @@ public sealed class BudgetTransactionTests
     {
         var date = new DateOnly(2026, 7, 20);
         var createdAtUtc = new DateTimeOffset(2026, 7, 21, 12, 0, 0, TimeSpan.Zero);
+        var budget = CreateBudget();
 
-        var transaction = new BudgetTransaction(
-            budgetId: 42,
+        var transaction = budget.AddTransaction(
             name: "Groceries",
             amount: -74.50m,
             date: date,
             createdAtUtc: createdAtUtc);
 
         Assert.Equal(0, transaction.Id);
-        Assert.Equal(42, transaction.BudgetId);
+        Assert.Equal(budget.Id, transaction.BudgetId);
         Assert.Equal("Groceries", transaction.Name);
         Assert.Equal(-74.50m, transaction.Amount);
         Assert.Equal(date, transaction.Date);
@@ -30,8 +30,7 @@ public sealed class BudgetTransactionTests
     [Fact]
     public void Create_WithPositiveAmountHavingScaleGreaterThanTwo_ThrowsDomainValidationException()
     {
-        var createTransaction = () => new BudgetTransaction(
-            budgetId: 1,
+        var createTransaction = () => CreateBudget().AddTransaction(
             name: "Income",
             amount: 1.230m,
             date: new DateOnly(2026, 7, 21),
@@ -43,8 +42,7 @@ public sealed class BudgetTransactionTests
     [Fact]
     public void Create_WithNegativeAmountHavingScaleGreaterThanTwo_ThrowsDomainValidationException()
     {
-        var createTransaction = () => new BudgetTransaction(
-            budgetId: 1,
+        var createTransaction = () => CreateBudget().AddTransaction(
             name: "Expense",
             amount: -1.230m,
             date: new DateOnly(2026, 7, 21),
@@ -56,8 +54,7 @@ public sealed class BudgetTransactionTests
     [Fact]
     public void Create_WithTwoDecimalAmount_Succeeds()
     {
-        var transaction = new BudgetTransaction(
-            budgetId: 1,
+        var transaction = CreateBudget().AddTransaction(
             name: "Expense",
             amount: -1.23m,
             date: new DateOnly(2026, 7, 21),
@@ -69,8 +66,7 @@ public sealed class BudgetTransactionTests
     [Fact]
     public void Create_TrimsName()
     {
-        var transaction = new BudgetTransaction(
-            budgetId: 1,
+        var transaction = CreateBudget().AddTransaction(
             name: "  Groceries  ",
             amount: -74.50m,
             date: new DateOnly(2026, 7, 21),
@@ -82,8 +78,7 @@ public sealed class BudgetTransactionTests
     [Fact]
     public void Create_WithNegativeAmount_PreservesSignedAmount()
     {
-        var transaction = new BudgetTransaction(
-            budgetId: 1,
+        var transaction = CreateBudget().AddTransaction(
             name: "Groceries",
             amount: -74.50m,
             date: new DateOnly(2026, 7, 21),
@@ -95,8 +90,7 @@ public sealed class BudgetTransactionTests
     [Fact]
     public void Create_WithPositiveAmount_PreservesSignedAmount()
     {
-        var transaction = new BudgetTransaction(
-            budgetId: 1,
+        var transaction = CreateBudget().AddTransaction(
             name: "Salary",
             amount: 250.25m,
             date: new DateOnly(2026, 7, 21),
@@ -110,8 +104,7 @@ public sealed class BudgetTransactionTests
     {
         var name = new string('a', 100);
 
-        var transaction = new BudgetTransaction(
-            budgetId: 1,
+        var transaction = CreateBudget().AddTransaction(
             name: name,
             amount: -10m,
             date: new DateOnly(2026, 7, 21),
@@ -123,8 +116,7 @@ public sealed class BudgetTransactionTests
     [Fact]
     public void Create_WithNameLongerThan100Characters_ThrowsDomainValidationException()
     {
-        var createTransaction = () => new BudgetTransaction(
-            budgetId: 1,
+        var createTransaction = () => CreateBudget().AddTransaction(
             name: $" {new string('a', 101)} ",
             amount: -10m,
             date: new DateOnly(2026, 7, 21),
@@ -139,8 +131,7 @@ public sealed class BudgetTransactionTests
     [InlineData("   ")]
     public void Create_WithInvalidName_ThrowsDomainValidationException(string? name)
     {
-        var createTransaction = () => new BudgetTransaction(
-            budgetId: 1,
+        var createTransaction = () => CreateBudget().AddTransaction(
             name: name!,
             amount: -10m,
             date: new DateOnly(2026, 7, 21),
@@ -152,13 +143,21 @@ public sealed class BudgetTransactionTests
     [Fact]
     public void Create_WithZeroAmount_ThrowsDomainValidationException()
     {
-        var createTransaction = () => new BudgetTransaction(
-            budgetId: 1,
+        var createTransaction = () => CreateBudget().AddTransaction(
             name: "Groceries",
             amount: 0m,
             date: new DateOnly(2026, 7, 21),
             createdAtUtc: new DateTimeOffset(2026, 7, 21, 12, 0, 0, TimeSpan.Zero));
 
         Assert.Throws<DomainValidationException>(createTransaction);
+    }
+
+    private static Budget CreateBudget()
+    {
+        return new Budget(
+            userId: Guid.NewGuid(),
+            name: "Monthly expenses",
+            startingBalance: 0m,
+            createdAtUtc: new DateTimeOffset(2026, 7, 21, 11, 0, 0, TimeSpan.Zero));
     }
 }

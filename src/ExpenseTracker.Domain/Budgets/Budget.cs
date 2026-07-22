@@ -1,14 +1,20 @@
 using ExpenseTracker.Domain.Common;
+using ExpenseTracker.Domain.Transactions;
 
 namespace ExpenseTracker.Domain.Budgets;
 
 public class Budget
 {
+    private readonly List<BudgetTransaction> _transactions = [];
+
     public long Id { get; private set; }
     public Guid UserId { get; }
     public string Name { get; private set; }
     public decimal StartingBalance { get; private set; }
     public DateTimeOffset CreatedAtUtc { get; }
+    public IReadOnlyCollection<BudgetTransaction> Transactions => _transactions.AsReadOnly();
+    public decimal CurrentBalance =>
+        StartingBalance + _transactions.Sum(transaction => transaction.Amount);
 
     public Budget(
         Guid userId,
@@ -30,6 +36,19 @@ public class Budget
     public void UpdateStartingBalance(decimal startingBalance)
     {
         StartingBalance = ValidateStartingBalance(startingBalance);
+    }
+
+    public BudgetTransaction AddTransaction(
+        string name,
+        decimal amount,
+        DateOnly date,
+        DateTimeOffset createdAtUtc)
+    {
+        var transaction = new BudgetTransaction(Id, name, amount, date, createdAtUtc);
+
+        _transactions.Add(transaction);
+
+        return transaction;
     }
 
     private static string ValidateName(string name)

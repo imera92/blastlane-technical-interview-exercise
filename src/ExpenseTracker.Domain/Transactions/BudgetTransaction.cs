@@ -4,21 +4,23 @@ namespace ExpenseTracker.Domain.Transactions;
 
 public class BudgetTransaction
 {
+    private long _budgetId;
+
     public long Id { get; private set; }
-    public long BudgetId { get; }
+    public long BudgetId => _budgetId;
     public string Name { get; private set; }
     public decimal Amount { get; private set; }
     public DateOnly Date { get; private set; }
     public DateTimeOffset CreatedAtUtc { get; }
 
-    public BudgetTransaction(
+    internal BudgetTransaction(
         long budgetId,
         string name,
         decimal amount,
         DateOnly date,
         DateTimeOffset createdAtUtc)
     {
-        BudgetId = budgetId;
+        _budgetId = budgetId;
         Name = ValidateName(name);
         Amount = ValidateAmount(amount);
         Date = date;
