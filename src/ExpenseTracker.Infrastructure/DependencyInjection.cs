@@ -1,6 +1,7 @@
 using ExpenseTracker.Application.Abstractions.Authentication;
 using ExpenseTracker.Application.Abstractions.Persistence;
 using ExpenseTracker.Infrastructure.Authentication;
+using ExpenseTracker.Infrastructure.Initialization;
 using ExpenseTracker.Infrastructure.Persistence;
 using ExpenseTracker.Infrastructure.Persistence.Repositories;
 using Microsoft.AspNetCore.Identity;
@@ -35,6 +36,7 @@ public static class DependencyInjection
             .AddEntityFrameworkStores<ExpenseTrackerDbContext>()
             .AddSignInManager();
         services.AddScoped<IIdentityService, IdentityService>();
+        services.AddScoped<ReviewerUserSeeder>();
         services.AddScoped<IBudgetRepository, BudgetRepository>();
         services.AddScoped<ITransactionRepository, TransactionRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();

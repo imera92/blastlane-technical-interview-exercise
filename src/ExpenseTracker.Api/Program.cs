@@ -3,6 +3,7 @@ using ExpenseTracker.Api.ErrorHandling;
 using ExpenseTracker.Application;
 using ExpenseTracker.Application.Abstractions.Security;
 using ExpenseTracker.Infrastructure;
+using ExpenseTracker.Infrastructure.Initialization;
 using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -39,8 +40,15 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUser, HttpCurrentUser>();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(connectionString);
+builder.Services
+    .AddOptions<ReviewerUserOptions>()
+    .Bind(builder.Configuration.GetSection(ReviewerUserOptions.SectionName))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
 
 var app = builder.Build();
+
+await app.Services.InitializeDatabaseAsync();
 
 app.UseExceptionHandler();
 app.UseAuthentication();
