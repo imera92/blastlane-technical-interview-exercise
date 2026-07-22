@@ -32,7 +32,8 @@ public static class DependencyInjection
                 options.SignIn.RequireConfirmedEmail = false;
                 options.SignIn.RequireConfirmedAccount = false;
             })
-            .AddEntityFrameworkStores<ExpenseTrackerDbContext>();
+            .AddEntityFrameworkStores<ExpenseTrackerDbContext>()
+            .AddSignInManager();
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddScoped<IBudgetRepository, BudgetRepository>();
         services.AddScoped<ITransactionRepository, TransactionRepository>();

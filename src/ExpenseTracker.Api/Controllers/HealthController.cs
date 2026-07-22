@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExpenseTracker.Api.Controllers;
@@ -6,6 +7,7 @@ namespace ExpenseTracker.Api.Controllers;
 [Route("health")]
 public sealed class HealthController : ControllerBase
 {
+    [AllowAnonymous]
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult Get()

@@ -11,9 +11,49 @@ internal sealed class IdentityService : IIdentityService
     private const string DuplicateUserNameCode = "DuplicateUserName";
 
     private readonly UserManager<ApplicationUser> _userManager;
-    public IdentityService(UserManager<ApplicationUser> userManager)
+    private readonly SignInManager<ApplicationUser> _signInManager;
+
+    public IdentityService(
+        UserManager<ApplicationUser> userManager,
+        SignInManager<ApplicationUser> signInManager)
     {
         _userManager = userManager;
+        _signInManager = signInManager;
+    }
+
+    public async Task<UserResult?> GetUserAsync(
+        Guid userId,
+        CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+
+        return user is null ? null : MapUser(user);
+    }
+
+    public async Task<Result<UserResult>> LoginAsync(
+        LoginUserCommand command,
+        CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var user = await _userManager.FindByEmailAsync(command.Email);
+
+        if (user is null)
+        {
+            return InvalidCredentials();
+        }
+
+        var signInResult = await _signInManager.PasswordSignInAsync(
+            user,
+            command.Password,
+            isPersistent: false,
+            lockoutOnFailure: false);
+
+        return signInResult.Succeeded
+            ? Result<UserResult>.Success(MapUser(user))
+            : InvalidCredentials();
     }
 
     public async Task<Result<UserResult>> RegisterAsync(
@@ -67,5 +107,22 @@ internal sealed class IdentityService : IIdentityService
             : ErrorType.Validation;
 
         return new Error(error.Code, error.Description, errorType);
+    }
+
+    private static UserResult MapUser(ApplicationUser user)
+    {
+        return new UserResult(
+            user.Id,
+            user.DisplayName,
+            user.Email!);
+    }
+
+    private static Result<UserResult> InvalidCredentials()
+    {
+        return Result<UserResult>.Failure(
+            new Error(
+                "InvalidCredentials",
+                "Invalid email or password.",
+                ErrorType.Unauthorized));
     }
 }
