@@ -162,6 +162,11 @@ public sealed class BudgetServiceTests
         public Budget? AddedBudget { get; private set; }
         public CancellationToken ReceivedCancellationToken { get; private set; }
 
+        public Task<bool> ExistsForUserAsync(long budgetId, Guid userId, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(AddedBudget?.Id == budgetId && AddedBudget.UserId == userId);
+        }
+
         public Task AddAsync(Budget budget, CancellationToken cancellationToken)
         {
             AddCallCount++;

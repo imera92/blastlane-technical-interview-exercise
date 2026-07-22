@@ -152,6 +152,37 @@ public sealed class BudgetTransactionTests
         Assert.Throws<DomainValidationException>(createTransaction);
     }
 
+    [Fact]
+    public void Update_WithValidValues_UpdatesTransactionData()
+    {
+        var transaction = CreateBudget().AddTransaction(
+            "Groceries",
+            -10m,
+            new DateOnly(2026, 7, 21),
+            new DateTimeOffset(2026, 7, 21, 12, 0, 0, TimeSpan.Zero));
+
+        transaction.Update("  Salary  ", 250m, new DateOnly(2026, 7, 22));
+
+        Assert.Equal("Salary", transaction.Name);
+        Assert.Equal(250m, transaction.Amount);
+        Assert.Equal(new DateOnly(2026, 7, 22), transaction.Date);
+    }
+
+    [Fact]
+    public void Update_WithInvalidAmount_PreservesAllTransactionData()
+    {
+        var createdAt = new DateTimeOffset(2026, 7, 21, 12, 0, 0, TimeSpan.Zero);
+        var transaction = CreateBudget().AddTransaction("Groceries", -10m, new DateOnly(2026, 7, 21), createdAt);
+
+        var update = () => transaction.Update("Salary", 0m, new DateOnly(2026, 7, 22));
+
+        Assert.Throws<DomainValidationException>(update);
+        Assert.Equal("Groceries", transaction.Name);
+        Assert.Equal(-10m, transaction.Amount);
+        Assert.Equal(new DateOnly(2026, 7, 21), transaction.Date);
+        Assert.Equal(createdAt, transaction.CreatedAtUtc);
+    }
+
     private static Budget CreateBudget()
     {
         return new Budget(

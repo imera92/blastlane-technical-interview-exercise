@@ -67,6 +67,11 @@ public class AuthenticationService : IAuthenticationService
             cancellationToken);
     }
 
+    public Task LogoutAsync(CancellationToken cancellationToken)
+    {
+        return _identityService.LogoutAsync(cancellationToken);
+    }
+
     public Task<Result<UserResult>> RegisterAsync(
         RegisterUserCommand command,
         CancellationToken cancellationToken)

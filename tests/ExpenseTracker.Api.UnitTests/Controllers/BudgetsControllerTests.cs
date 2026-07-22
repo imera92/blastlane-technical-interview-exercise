@@ -34,9 +34,10 @@ public sealed class BudgetsControllerTests
 
         var result = await controller.Create(request, cancellationToken);
 
-        var created = Assert.IsType<CreatedResult>(result.Result);
+        var created = Assert.IsType<CreatedAtActionResult>(result.Result);
         Assert.Equal(StatusCodes.Status201Created, created.StatusCode);
-        Assert.Equal("/api/budgets/42", created.Location);
+        Assert.Equal(nameof(BudgetsController.GetById), created.ActionName);
+        Assert.Equal(42L, created.RouteValues!["budgetId"]);
         var response = Assert.IsType<BudgetSummaryResponse>(created.Value);
         Assert.Equal(budget.Id, response.Id);
         Assert.Equal(budget.Name, response.Name);
@@ -169,5 +170,10 @@ public sealed class BudgetsControllerTests
 
             return Task.FromResult(_result);
         }
+
+        public Task<Result<bool>> DeleteAsync(long budgetId, CancellationToken cancellationToken) => throw new NotSupportedException();
+        public Task<Result<BudgetDetailsResult>> GetAsync(long budgetId, CancellationToken cancellationToken) => throw new NotSupportedException();
+        public Task<Result<IReadOnlyList<BudgetResult>>> ListAsync(CancellationToken cancellationToken) => throw new NotSupportedException();
+        public Task<Result<BudgetResult>> UpdateAsync(long budgetId, UpdateBudgetCommand command, CancellationToken cancellationToken) => throw new NotSupportedException();
     }
 }

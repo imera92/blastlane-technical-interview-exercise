@@ -13,6 +13,8 @@ public interface IIdentityService
         LoginUserCommand command,
         CancellationToken cancellationToken);
 
+    Task LogoutAsync(CancellationToken cancellationToken);
+
     Task<Result<UserResult>> RegisterAsync(
         RegisterUserCommand command,
         CancellationToken cancellationToken);

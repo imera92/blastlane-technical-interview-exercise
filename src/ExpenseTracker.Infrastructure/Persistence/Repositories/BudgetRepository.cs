@@ -13,6 +13,16 @@ internal sealed class BudgetRepository : IBudgetRepository
         _dbContext = dbContext;
     }
 
+    public Task<bool> ExistsForUserAsync(
+        long budgetId,
+        Guid userId,
+        CancellationToken cancellationToken)
+    {
+        return _dbContext.Set<Budget>().AnyAsync(
+            budget => budget.Id == budgetId && budget.UserId == userId,
+            cancellationToken);
+    }
+
     public Task<Budget?> GetByIdForUserAsync(
         long budgetId,
         Guid userId,

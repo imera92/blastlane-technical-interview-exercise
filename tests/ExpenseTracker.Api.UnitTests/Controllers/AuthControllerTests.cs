@@ -248,6 +248,23 @@ public sealed class AuthControllerTests
         Assert.NotEmpty(attributes);
     }
 
+    [Fact]
+    public async Task Logout_ReturnsNoContentAndCallsAuthenticationService()
+    {
+        var authenticationService = new StubAuthenticationService(
+            Result<UserResult>.Success(new UserResult(Guid.NewGuid(), "Iván", "ivan@example.com")));
+        var controller = new AuthController(authenticationService);
+        var cancellationToken = new CancellationTokenSource().Token;
+
+        var result = await controller.Logout(cancellationToken);
+
+        Assert.IsType<NoContentResult>(result);
+        Assert.Equal(1, authenticationService.LogoutCallCount);
+        Assert.Equal(cancellationToken, authenticationService.ReceivedLogoutCancellationToken);
+        Assert.NotEmpty(typeof(AuthController).GetMethod(nameof(AuthController.Logout))!
+            .GetCustomAttributes(typeof(AuthorizeAttribute), inherit: true));
+    }
+
     private static RegisterRequest CreateRequest()
     {
         return new RegisterRequest
@@ -278,6 +295,8 @@ public sealed class AuthControllerTests
 
         public RegisterUserCommand? ReceivedCommand { get; private set; }
         public LoginUserCommand? ReceivedLoginCommand { get; private set; }
+        public int LogoutCallCount { get; private set; }
+        public CancellationToken ReceivedLogoutCancellationToken { get; private set; }
 
         public Task<Result<UserResult>> GetCurrentUserAsync(
             CancellationToken cancellationToken)
@@ -291,6 +310,13 @@ public sealed class AuthControllerTests
         {
             ReceivedLoginCommand = command;
             return Task.FromResult(_result);
+        }
+
+        public Task LogoutAsync(CancellationToken cancellationToken)
+        {
+            LogoutCallCount++;
+            ReceivedLogoutCancellationToken = cancellationToken;
+            return Task.CompletedTask;
         }
 
         public Task<Result<UserResult>> RegisterAsync(

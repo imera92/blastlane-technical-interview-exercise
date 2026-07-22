@@ -1,4 +1,5 @@
 using ExpenseTracker.Api.Security;
+using ExpenseTracker.Api.ErrorHandling;
 using ExpenseTracker.Application;
 using ExpenseTracker.Application.Abstractions.Security;
 using ExpenseTracker.Infrastructure;
@@ -10,6 +11,8 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
         "Connection string 'DefaultConnection' was not found.");
 
 builder.Services.AddControllers();
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services
     .AddAuthentication(options =>
     {
@@ -39,6 +42,7 @@ builder.Services.AddInfrastructure(connectionString);
 
 var app = builder.Build();
 
+app.UseExceptionHandler();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

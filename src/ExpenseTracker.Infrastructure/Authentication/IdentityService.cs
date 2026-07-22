@@ -56,6 +56,12 @@ internal sealed class IdentityService : IIdentityService
             : InvalidCredentials();
     }
 
+    public Task LogoutAsync(CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        return _signInManager.SignOutAsync();
+    }
+
     public async Task<Result<UserResult>> RegisterAsync(
         RegisterUserCommand command,
         CancellationToken cancellationToken)

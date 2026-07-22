@@ -27,6 +27,16 @@ public class BudgetTransaction
         CreatedAtUtc = createdAtUtc;
     }
 
+    public void Update(string name, decimal amount, DateOnly date)
+    {
+        var validatedName = ValidateName(name);
+        var validatedAmount = ValidateAmount(amount);
+
+        Name = validatedName;
+        Amount = validatedAmount;
+        Date = date;
+    }
+
     private static string ValidateName(string name)
     {
         if (string.IsNullOrWhiteSpace(name))

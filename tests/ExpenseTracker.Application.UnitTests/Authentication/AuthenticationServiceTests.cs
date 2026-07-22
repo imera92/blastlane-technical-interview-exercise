@@ -210,6 +210,20 @@ public sealed class AuthenticationServiceTests
         Assert.Equal(1, identityService.LoginCallCount);
     }
 
+    [Fact]
+    public async Task LogoutAsync_DelegatesToIdentityService()
+    {
+        var identityService = new RecordingIdentityService(
+            Result<UserResult>.Success(CreateUserResult()));
+        var service = CreateService(identityService);
+        var cancellationToken = new CancellationTokenSource().Token;
+
+        await service.LogoutAsync(cancellationToken);
+
+        Assert.Equal(1, identityService.LogoutCallCount);
+        Assert.Equal(cancellationToken, identityService.ReceivedLogoutCancellationToken);
+    }
+
     [Theory]
     [InlineData(null)]
     [InlineData("")]
@@ -338,12 +352,14 @@ public sealed class AuthenticationServiceTests
         public int CallCount { get; private set; }
         public int GetUserCallCount { get; private set; }
         public int LoginCallCount { get; private set; }
+        public int LogoutCallCount { get; private set; }
         public Guid ReceivedUserId { get; private set; }
         public RegisterUserCommand? ReceivedCommand { get; private set; }
         public LoginUserCommand? ReceivedLoginCommand { get; private set; }
         public CancellationToken ReceivedCancellationToken { get; private set; }
         public CancellationToken ReceivedGetUserCancellationToken { get; private set; }
         public CancellationToken ReceivedLoginCancellationToken { get; private set; }
+        public CancellationToken ReceivedLogoutCancellationToken { get; private set; }
 
         public Task<UserResult?> GetUserAsync(
             Guid userId,
@@ -365,6 +381,13 @@ public sealed class AuthenticationServiceTests
             ReceivedLoginCancellationToken = cancellationToken;
 
             return Task.FromResult(_result);
+        }
+
+        public Task LogoutAsync(CancellationToken cancellationToken)
+        {
+            LogoutCallCount++;
+            ReceivedLogoutCancellationToken = cancellationToken;
+            return Task.CompletedTask;
         }
 
         public Task<Result<UserResult>> RegisterAsync(

@@ -51,6 +51,16 @@ public sealed class AuthController : ControllerBase
     }
 
     [Authorize]
+    [HttpPost("logout")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> Logout(CancellationToken cancellationToken)
+    {
+        await _authenticationService.LogoutAsync(cancellationToken);
+        return NoContent();
+    }
+
+    [Authorize]
     [HttpGet("me")]
     [ProducesResponseType(typeof(AuthenticationResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
