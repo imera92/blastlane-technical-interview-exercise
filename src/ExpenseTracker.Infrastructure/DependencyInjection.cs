@@ -39,6 +39,7 @@ public static class DependencyInjection
         services.AddScoped<ReviewerUserSeeder>();
         services.AddScoped<IBudgetRepository, BudgetRepository>();
         services.AddScoped<ITransactionRepository, TransactionRepository>();
+        services.AddScoped<ITaskRepository, TaskRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         return services;

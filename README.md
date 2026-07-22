@@ -202,3 +202,64 @@ frontend/
 - The seeded reviewer and automatic startup migrations exist only to make evaluation straightforward.
 
 These boundaries kept the implementation focused on the core budgeting workflow, domain modeling, ownership security, persistence correctness, and a usable full-stack demonstration.
+
+# GEN-AI EXERCISE
+For this part my preferred tool was Codex. To kick things off, I added an AGENTS.md file detailing Git privacy rules and workflow, some architecture rules, TDD workflow that the agent should follow and what a completion report should look like.
+
+I also added `docs/gen-ai-exercise.md` in which copy-pasted the requirement from the Technical Interview Exercise document. With that setup, my first prompt was:
+
+```
+You'll help me develop the feature described in docs/gen-ai-exercise.md. We will do it in one slice.
+
+First, read AGENTS.md. You must follow the TDD workflow detailed in there.
+
+Then, inspect the repository and prepare a detailed implementation plan.
+
+The plan must include:
+
+Scope.
+Expected files and code changes.
+Tests to write first.
+Explicit exclusions.
+Completion criteria.
+Any assumptions, ambiguities, or decisions that require approval.
+
+Do not make decisions that affect requirements, API contracts, architecture, data modeling, security, or slice scope without presenting them to me first. You may make routine, low-risk implementation choices that follow the existing specification, but identify them clearly in the plan.
+
+Do not implement or modify files yet.
+```
+
+This helps me generate an implementation plan that I can check and iterate, and also confirm if any assumptions were made to adjust them. After that, the point is to make this plan a durable artifact that can survive between sessions, so I continue with:
+
+```
+You will save the agreed plan as:
+
+docs/plan.md
+
+Do not print the content of the file in the CLI. Your final response should only confirm whether the file was created successfully.
+
+Preserve the agreed plan exactly, except for formatting or corrections explicitly approved by me. Do not begin implementation.
+```
+
+I've included the plan as evidence. With the plan saved then comes actual development:
+
+```
+Implement only the approved plan in docs/plan.md.
+
+Follow the TDD workflow and all architecture rules in AGENTS.md. Do not implement unrelated improvements.
+
+If implementation reveals a conflict or requires a decision not covered by the approved plan, stop before making that decision and explain the issue.
+
+At completion:
+
+Run the relevant tests.
+Run the full unit-test suite.
+Review the diff for unrelated changes.
+Report changed files, tests, commands, results, manual checks, and unresolved issues.
+
+The task can only be considered completed if all of the CRUD operations work and persist data.
+```
+
+With this prompt, any decision becomes a checkpoint, so the agent does not infer as much and allows me to make decisions. In my experience the AGENTS.md file can be ignored. It happens very infrequently, but it can happen, so I prompt the agent to read it again. The final report gives me a good idea of what happened during development and the process the agent followed to ensure correcteness. I saved the completion report in `docs/report.md` for anyone to see.
+
+The final constraint allows the agent to enter in somehwat of a loop; it stops only when the feature actually works. Once it's done, changes are not committed so I can review them myself. If everything's, and after asking for changes if necessary, I simply ask it to commit and push.

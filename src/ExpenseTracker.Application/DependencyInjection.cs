@@ -1,6 +1,7 @@
 using ExpenseTracker.Application.Authentication;
 using ExpenseTracker.Application.Budgets;
 using ExpenseTracker.Application.Transactions;
+using ExpenseTracker.Application.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ExpenseTracker.Application;
@@ -13,6 +14,7 @@ public static class DependencyInjection
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<IBudgetService, BudgetService>();
         services.AddScoped<ITransactionService, TransactionService>();
+        services.AddScoped<ITaskService, TaskService>();
 
         return services;
     }
